@@ -69,7 +69,7 @@ Requires [uv](https://docs.astral.sh/uv/) and a free
 [Gemini API key](https://aistudio.google.com/apikey).
 
 ```bash
-git clone https://github.com/<you>/spec-check.git
+git clone https://github.com/wanyan2333/spec-check.git
 cd spec-check
 uv sync
 cp .env.example .env        # then put your GEMINI_API_KEY in .env
