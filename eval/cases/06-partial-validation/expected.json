@@ -1,0 +1,7 @@
+{
+  "description": "Priority range check only enforces the upper bound (le=5); 0 and negative values are accepted.",
+  "criteria": {
+    "AC1": {"implemented": "yes", "tested": "yes"},
+    "AC2": {"implemented": "partial", "tested": "yes"}
+  }
+}

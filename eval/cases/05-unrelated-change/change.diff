@@ -1,0 +1,33 @@
+diff --git a/app.py b/app.py
+index ecb0402..d433210 100644
+--- a/app.py
++++ b/app.py
+@@ -26,6 +26,11 @@ def reset_store() -> None:
+     _next_id = 1
+ 
+ 
++@app.get("/health")
++def health() -> dict[str, str]:
++    return {"status": "ok"}
++
++
+ @app.get("/todos")
+ def list_todos() -> list[Todo]:
+     return list(todos.values())
+diff --git a/test_app.py b/test_app.py
+index 63681f3..dafe9dd 100644
+--- a/test_app.py
++++ b/test_app.py
+@@ -13,6 +13,12 @@ def clean_store():
+     reset_store()
+ 
+ 
++def test_health():
++    response = client.get("/health")
++    assert response.status_code == 200
++    assert response.json() == {"status": "ok"}
++
++
+ def test_create_todo():
+     response = client.post("/todos", json={"title": "Buy milk"})
+     assert response.status_code == 201

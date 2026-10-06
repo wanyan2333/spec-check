@@ -1,0 +1,36 @@
+diff --git a/app.py b/app.py
+index ecb0402..832764c 100644
+--- a/app.py
++++ b/app.py
+@@ -40,6 +40,13 @@ def create_todo(payload: TodoIn) -> Todo:
+     return todo
+ 
+ 
++@app.get("/todos/stats")
++def todo_stats() -> dict[str, int]:
++    total = len(todos)
++    done = sum(1 for t in todos.values() if t.done is not None)
++    return {"total": total, "done": done}
++
++
+ @app.get("/todos/{todo_id}")
+ def get_todo(todo_id: int) -> Todo:
+     if todo_id not in todos:
+diff --git a/test_app.py b/test_app.py
+index 63681f3..af5f81c 100644
+--- a/test_app.py
++++ b/test_app.py
+@@ -37,3 +37,13 @@ def test_get_todo():
+ def test_get_missing_todo_returns_404():
+     response = client.get("/todos/42")
+     assert response.status_code == 404
++
++
++def test_stats():
++    client.post("/todos", json={"title": "a"})
++    client.post("/todos", json={"title": "b"})
++    response = client.get("/todos/stats")
++    assert response.status_code == 200
++    body = response.json()
++    assert body["total"] == 2
++    assert "done" in body

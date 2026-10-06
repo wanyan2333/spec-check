@@ -1,0 +1,7 @@
+{
+  "description": "Status filter is implemented correctly but the change adds no tests at all.",
+  "criteria": {
+    "AC1": {"implemented": "yes", "tested": "no"},
+    "AC2": {"implemented": "yes", "tested": "no"}
+  }
+}

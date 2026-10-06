@@ -1,0 +1,8 @@
+{
+  "description": "Fully implemented and fully tested: PATCH to mark a todo done.",
+  "criteria": {
+    "AC1": {"implemented": "yes", "tested": "yes"},
+    "AC2": {"implemented": "yes", "tested": "yes"},
+    "AC3": {"implemented": "yes", "tested": "yes"}
+  }
+}

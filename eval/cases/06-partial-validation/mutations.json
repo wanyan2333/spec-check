@@ -1,0 +1,8 @@
+{
+  "AC1": [
+    {"file": "app.py", "find": "priority=payload.priority)", "replace": "priority=3)"}
+  ],
+  "AC2": [
+    {"file": "app.py", "find": "Field(default=3, le=5)", "replace": "Field(default=3)"}
+  ]
+}

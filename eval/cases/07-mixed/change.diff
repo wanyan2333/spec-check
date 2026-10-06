@@ -1,0 +1,35 @@
+diff --git a/app.py b/app.py
+index ecb0402..d51dba8 100644
+--- a/app.py
++++ b/app.py
+@@ -27,8 +27,9 @@ def reset_store() -> None:
+ 
+ 
+ @app.get("/todos")
+-def list_todos() -> list[Todo]:
+-    return list(todos.values())
++def list_todos(limit: int = 50, offset: int = 0) -> list[Todo]:
++    items = list(todos.values())
++    return items[offset : offset + limit]
+ 
+ 
+ @app.post("/todos", status_code=201)
+diff --git a/test_app.py b/test_app.py
+index 63681f3..4f59733 100644
+--- a/test_app.py
++++ b/test_app.py
+@@ -27,6 +27,14 @@ def test_list_todos():
+     assert [t["title"] for t in response.json()] == ["a", "b"]
+ 
+ 
++def test_list_todos_with_limit():
++    for title in ["a", "b", "c"]:
++        client.post("/todos", json={"title": title})
++    response = client.get("/todos", params={"limit": 2})
++    assert response.status_code == 200
++    assert [t["title"] for t in response.json()] == ["a", "b"]
++
++
+ def test_get_todo():
+     client.post("/todos", json={"title": "Buy milk"})
+     response = client.get("/todos/1")

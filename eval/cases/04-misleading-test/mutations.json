@@ -1,0 +1,11 @@
+{
+  "AC1": [
+    {"file": "app.py", "find": "Field(min_length=1, max_length=100)", "replace": "Field(max_length=100)"}
+  ],
+  "AC2": [
+    {"file": "app.py", "find": "Field(min_length=1, max_length=100)", "replace": "Field(min_length=1)"}
+  ],
+  "AC3": [
+    {"file": "app.py", "find": "Field(min_length=1, max_length=100)", "replace": "Field(min_length=1, max_length=99)"}
+  ]
+}

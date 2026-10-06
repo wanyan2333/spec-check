@@ -1,0 +1,5 @@
+{
+  "AC1": [
+    {"file": "app.py", "find": "    total = len(todos)\n", "replace": "    total = 0\n"}
+  ]
+}

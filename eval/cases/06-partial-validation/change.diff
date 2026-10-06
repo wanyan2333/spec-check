@@ -1,0 +1,64 @@
+diff --git a/app.py b/app.py
+index ecb0402..d0e0ec4 100644
+--- a/app.py
++++ b/app.py
+@@ -1,19 +1,21 @@
+ """A tiny in-memory todo API used as the subject of the spec-check evaluation."""
+ 
+ from fastapi import FastAPI, HTTPException
+-from pydantic import BaseModel
++from pydantic import BaseModel, Field
+ 
+ app = FastAPI(title="Todo API")
+ 
+ 
+ class TodoIn(BaseModel):
+     title: str
++    priority: int = Field(default=3, le=5)
+ 
+ 
+ class Todo(BaseModel):
+     id: int
+     title: str
+     done: bool = False
++    priority: int = 3
+ 
+ 
+ todos: dict[int, Todo] = {}
+@@ -34,7 +36,7 @@ def list_todos() -> list[Todo]:
+ @app.post("/todos", status_code=201)
+ def create_todo(payload: TodoIn) -> Todo:
+     global _next_id
+-    todo = Todo(id=_next_id, title=payload.title)
++    todo = Todo(id=_next_id, title=payload.title, priority=payload.priority)
+     todos[todo.id] = todo
+     _next_id += 1
+     return todo
+diff --git a/test_app.py b/test_app.py
+index 63681f3..13c78b5 100644
+--- a/test_app.py
++++ b/test_app.py
+@@ -16,7 +16,7 @@ def clean_store():
+ def test_create_todo():
+     response = client.post("/todos", json={"title": "Buy milk"})
+     assert response.status_code == 201
+-    assert response.json() == {"id": 1, "title": "Buy milk", "done": False}
++    assert response.json() == {"id": 1, "title": "Buy milk", "done": False, "priority": 3}
+ 
+ 
+ def test_list_todos():
+@@ -37,3 +37,14 @@ def test_get_todo():
+ def test_get_missing_todo_returns_404():
+     response = client.get("/todos/42")
+     assert response.status_code == 404
++
++
++def test_create_todo_with_priority():
++    response = client.post("/todos", json={"title": "Pay rent", "priority": 1})
++    assert response.status_code == 201
++    assert response.json()["priority"] == 1
++
++
++def test_create_todo_rejects_priority_above_5():
++    response = client.post("/todos", json={"title": "Pay rent", "priority": 6})
++    assert response.status_code == 422

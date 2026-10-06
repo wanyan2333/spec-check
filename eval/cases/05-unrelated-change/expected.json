@@ -1,0 +1,7 @@
+{
+  "description": "The change adds a /health endpoint and its test; nothing related to search.",
+  "criteria": {
+    "AC1": {"implemented": "no", "tested": "no"},
+    "AC2": {"implemented": "no", "tested": "no"}
+  }
+}

@@ -1,0 +1,17 @@
+diff --git a/app.py b/app.py
+index ecb0402..ca89f53 100644
+--- a/app.py
++++ b/app.py
+@@ -27,7 +27,11 @@ def reset_store() -> None:
+ 
+ 
+ @app.get("/todos")
+-def list_todos() -> list[Todo]:
++def list_todos(done: bool | None = None) -> list[Todo]:
++    if done is True:
++        return [t for t in todos.values() if t.done]
++    if done is False:
++        return [t for t in todos.values() if not t.done]
+     return list(todos.values())
+ 
+ 

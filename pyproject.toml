@@ -36,6 +36,12 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# Post-change fixtures for the eval cases; they contain deliberate defects.
+extend-exclude = ["eval/cases/*/after"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+# Local modules imported by the eval scripts, the sample app tests and probes.
+known-first-party = ["spec_check", "app", "case_tools"]

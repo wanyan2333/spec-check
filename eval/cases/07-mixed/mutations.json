@@ -1,0 +1,8 @@
+{
+  "AC1": [
+    {"file": "app.py", "find": "items[offset : offset + limit]", "replace": "items[offset:]"}
+  ],
+  "AC2": [
+    {"file": "app.py", "find": "items[offset : offset + limit]", "replace": "items[:limit]"}
+  ]
+}

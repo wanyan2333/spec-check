@@ -1,0 +1,8 @@
+{
+  "description": "Pagination: limit is implemented and tested, offset is implemented but untested, the limit cap of 100 is missing.",
+  "criteria": {
+    "AC1": {"implemented": "yes", "tested": "yes"},
+    "AC2": {"implemented": "yes", "tested": "no"},
+    "AC3": {"implemented": "no", "tested": "no"}
+  }
+}

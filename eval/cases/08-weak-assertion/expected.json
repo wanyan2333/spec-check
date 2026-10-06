@@ -1,0 +1,7 @@
+{
+  "description": "Stats endpoint counts every todo as done (`t.done is not None`); the test only asserts that the `done` key exists, so it passes anyway.",
+  "criteria": {
+    "AC1": {"implemented": "yes", "tested": "yes"},
+    "AC2": {"implemented": "no", "tested": "no"}
+  }
+}

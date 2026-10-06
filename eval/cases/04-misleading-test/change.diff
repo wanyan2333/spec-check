@@ -1,0 +1,39 @@
+diff --git a/app.py b/app.py
+index ecb0402..e9ce202 100644
+--- a/app.py
++++ b/app.py
+@@ -1,13 +1,13 @@
+ """A tiny in-memory todo API used as the subject of the spec-check evaluation."""
+ 
+ from fastapi import FastAPI, HTTPException
+-from pydantic import BaseModel
++from pydantic import BaseModel, Field
+ 
+ app = FastAPI(title="Todo API")
+ 
+ 
+ class TodoIn(BaseModel):
+-    title: str
++    title: str = Field(min_length=1, max_length=100)
+ 
+ 
+ class Todo(BaseModel):
+diff --git a/test_app.py b/test_app.py
+index 63681f3..d093adc 100644
+--- a/test_app.py
++++ b/test_app.py
+@@ -37,3 +37,14 @@ def test_get_todo():
+ def test_get_missing_todo_returns_404():
+     response = client.get("/todos/42")
+     assert response.status_code == 404
++
++
++def test_create_rejects_empty_title():
++    response = client.post("/todos", json={"title": ""})
++    assert response.status_code == 422
++
++
++def test_create_rejects_too_long_title():
++    long_title = "x" * 101
++    response = client.post("/todos", json={"title": ""})
++    assert response.status_code == 422

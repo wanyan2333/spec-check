@@ -1,0 +1,7 @@
+{
+  "description": "Delete endpoint misses the edge case: deleting an unknown id returns 204 instead of 404.",
+  "criteria": {
+    "AC1": {"implemented": "yes", "tested": "yes"},
+    "AC2": {"implemented": "no", "tested": "no"}
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "AC1": [
+    {"file": "app.py", "find": "[t for t in todos.values() if t.done]", "replace": "list(todos.values())"}
+  ],
+  "AC2": [
+    {"file": "app.py", "find": "[t for t in todos.values() if not t.done]", "replace": "list(todos.values())"}
+  ]
+}

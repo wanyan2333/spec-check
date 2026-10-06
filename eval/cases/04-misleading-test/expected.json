@@ -1,0 +1,8 @@
+{
+  "description": "Validation is implemented, but test_create_rejects_too_long_title was copy-pasted and still posts an empty title, so the length limit is never exercised.",
+  "criteria": {
+    "AC1": {"implemented": "yes", "tested": "yes"},
+    "AC2": {"implemented": "yes", "tested": "no"},
+    "AC3": {"implemented": "yes", "tested": "no"}
+  }
+}
