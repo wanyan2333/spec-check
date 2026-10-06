@@ -1,0 +1,41 @@
+[project]
+name = "spec-check"
+version = "0.1.0"
+description = "LLM-assisted release evidence: check a git diff against a requirement's acceptance criteria, with anti-hallucination evidence verification."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.40",
+    "pydantic>=2.7",
+    "python-dotenv>=1.0",
+]
+
+[project.scripts]
+spec-check = "spec_check.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.5",
+    # Used by the evaluation sample app (eval/sample_app) and label verification.
+    "fastapi>=0.110",
+    "httpx>=0.27",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/spec_check"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
