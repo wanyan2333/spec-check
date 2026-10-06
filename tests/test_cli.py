@@ -1,5 +1,7 @@
 import json
 
+import httpx
+import openai
 import pytest
 
 from spec_check.cli import EXIT_ERROR, EXIT_GAPS, EXIT_OK, main
@@ -60,6 +62,22 @@ def test_unusable_llm_output_is_an_error(req_file, diff_file):
     llm = FakeLLM("garbage", "still garbage")
     argv = ["--req", str(req_file), "--diff", str(diff_file), "--quiet"]
     assert main(argv, client_factory=lambda model: llm) == EXIT_ERROR
+
+
+def test_api_failure_after_retries_is_a_clean_error(req_file, diff_file, capsys):
+    # Seen for real: gemini-3.5-flash answered 503 "high demand" on every retry.
+    class OverloadedLLM:
+        model = "busy-model"
+
+        def complete(self, messages):
+            request = httpx.Request("POST", "https://example.test")
+            raise openai.InternalServerError(
+                "high demand", response=httpx.Response(503, request=request), body=None
+            )
+
+    argv = ["--req", str(req_file), "--diff", str(diff_file), "--quiet"]
+    assert main(argv, client_factory=lambda model: OverloadedLLM()) == EXIT_ERROR
+    assert "high demand" in capsys.readouterr().err
 
 
 def test_missing_api_key_is_an_error(req_file, diff_file, monkeypatch, tmp_path):

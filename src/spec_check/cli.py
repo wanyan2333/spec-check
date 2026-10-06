@@ -7,6 +7,8 @@ import sys
 from collections.abc import Callable
 from pathlib import Path
 
+import openai
+
 from spec_check.checker import CheckError, run_check
 from spec_check.llm import LLMClient, client_from_env
 from spec_check.prompts import DEFAULT_PROMPT_VERSION, PROMPTS
@@ -61,7 +63,7 @@ def main(
         diff_text = args.diff.read_text(encoding="utf-8")
         client = client_factory(args.model)
         report = run_check(requirement, diff_text, client, prompt_version=args.prompt)
-    except (OSError, RequirementError, CheckError, RuntimeError) as exc:
+    except (OSError, RequirementError, CheckError, RuntimeError, openai.APIError) as exc:
         print(f"spec-check: error: {exc}", file=sys.stderr)
         return EXIT_ERROR
 
