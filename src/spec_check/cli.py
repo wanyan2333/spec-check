@@ -51,10 +51,9 @@ def main(
     client_factory: Callable[[str | None], LLMClient] = client_from_env,
 ) -> int:
     args = build_parser().parse_args(argv)
-    logging.basicConfig(
-        level=logging.WARNING if args.quiet else logging.INFO,
-        format="%(levelname)s %(name)s: %(message)s",
-    )
+    # Third-party libraries log at WARNING; our own per-call latency/token log at INFO.
+    logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
+    logging.getLogger("spec_check").setLevel(logging.WARNING if args.quiet else logging.INFO)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")  # the report contains emoji
 

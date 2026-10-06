@@ -1,0 +1,91 @@
+{
+  "title": "Paginate the todo list",
+  "user_story": "As a user with a long list, I want `GET /todos` to be paginated so that the app stays fast.",
+  "model": "gemini-3.5-flash-lite",
+  "prompt_version": "v2",
+  "results": [
+    {
+      "id": "AC1",
+      "text": "`GET /todos?limit=N` returns at most N todos.",
+      "implemented": "yes",
+      "tested": "yes",
+      "confidence": 1.0,
+      "reasoning": "The code slices the todo list using the limit and offset parameters, and the test verifies that requesting limit=2 on 3 items returns at most 2 items.",
+      "evidence": [
+        {
+          "file": "app.py",
+          "snippet": "def list_todos(limit: int = 50, offset: int = 0) -> list[Todo]:\n    items = list(todos.values())\n    return items[offset : offset + limit]",
+          "verified": true,
+          "is_test_file": false,
+          "note": ""
+        },
+        {
+          "file": "test_app.py",
+          "snippet": "def test_list_todos_with_limit():\n    for title in [\"a\", \"b\", \"c\"]:\n        client.post(\"/todos\", json={\"title\": title})\n    response = client.get(\"/todos\", params={\"limit\": 2})\n    assert response.status_code == 200\n    assert [t[\"title\"] for t in response.json()] == [\"a\", \"b\"]",
+          "verified": true,
+          "is_test_file": true,
+          "note": ""
+        }
+      ],
+      "review_reasons": [],
+      "needs_human_review": false
+    },
+    {
+      "id": "AC2",
+      "text": "`GET /todos?offset=M` skips the first M todos.",
+      "implemented": "yes",
+      "tested": "no",
+      "confidence": 1.0,
+      "reasoning": "The implementation correctly applies the offset parameter to slice the items list, but there is no test in the diff verifying offset behavior.",
+      "evidence": [
+        {
+          "file": "app.py",
+          "snippet": "def list_todos(limit: int = 50, offset: int = 0) -> list[Todo]:\n    items = list(todos.values())\n    return items[offset : offset + limit]",
+          "verified": true,
+          "is_test_file": false,
+          "note": ""
+        }
+      ],
+      "review_reasons": [],
+      "needs_human_review": false
+    },
+    {
+      "id": "AC3",
+      "text": "A `limit` greater than 100 is rejected with 422.",
+      "implemented": "no",
+      "tested": "no",
+      "confidence": 1.0,
+      "reasoning": "There is no validation logic to reject limits greater than 100 with a 422 status code, and no test for this requirement.",
+      "evidence": [
+        {
+          "file": "app.py",
+          "snippet": "def list_todos(limit: int = 50, offset: int = 0) -> list[Todo]:",
+          "verified": true,
+          "is_test_file": false,
+          "note": ""
+        }
+      ],
+      "review_reasons": [],
+      "needs_human_review": false
+    }
+  ],
+  "calls": [
+    {
+      "purpose": "initial",
+      "model": "gemini-3.5-flash-lite",
+      "latency_s": 2.66,
+      "prompt_tokens": 1124,
+      "completion_tokens": 582,
+      "retries": 0
+    }
+  ],
+  "summary": {
+    "criteria": 3,
+    "gaps": 2,
+    "needs_human_review": 0,
+    "total_snippets": 4,
+    "unverified_snippets": 0,
+    "total_tokens": 1706,
+    "total_latency_s": 2.66
+  }
+}
