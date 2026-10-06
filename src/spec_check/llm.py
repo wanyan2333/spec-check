@@ -79,7 +79,10 @@ class OpenAICompatClient:
                 delay = min(self.base_delay_s * 2**attempt, 60.0)
                 log.warning(
                     "LLM call failed (%s), retry %d/%d in %.0fs",
-                    type(exc).__name__, attempt + 1, self.max_retries, delay,
+                    type(exc).__name__,
+                    attempt + 1,
+                    self.max_retries,
+                    delay,
                 )
                 self._sleep(delay)
                 continue
@@ -96,8 +99,11 @@ class OpenAICompatClient:
             )
             log.info(
                 "LLM call: model=%s latency=%.2fs tokens=%d (prompt %d, completion %d)",
-                self.model, latency, result.total_tokens,
-                result.prompt_tokens, result.completion_tokens,
+                self.model,
+                latency,
+                result.total_tokens,
+                result.prompt_tokens,
+                result.completion_tokens,
             )
             return result
         raise AssertionError("unreachable")
@@ -111,7 +117,5 @@ def client_from_env(model: str | None = None) -> OpenAICompatClient:
         raise RuntimeError("GEMINI_API_KEY is not set. Copy .env.example to .env and fill it in.")
     model = model or os.environ.get("SPEC_CHECK_MODEL")
     if not model:
-        raise RuntimeError(
-            "SPEC_CHECK_MODEL is not set. Run scripts/list_models.py and pick one."
-        )
+        raise RuntimeError("SPEC_CHECK_MODEL is not set. Run scripts/list_models.py and pick one.")
     return OpenAICompatClient(api_key=api_key, model=model)
