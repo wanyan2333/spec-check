@@ -271,22 +271,21 @@ passing, two labels were flipped on purpose, and it rejected both.
 
 ## How I used AI to build this
 
-This repository was built by an AI coding agent (Claude in Claude Code) from a detailed
-written brief, with no human code review during the build. I chose that setup on purpose,
-because the project is about **not trusting AI output without verification**, and the
-build process followed the same rule:
+I wrote a detailed brief (features, anti-hallucination design, evaluation method and
+acceptance standards) and used Claude Code as the coding agent to implement it. Because the
+project is about not trusting AI output without verification, I applied the same rule to
+the build:
 
-- **Verification over review.** Instead of eyeballing eval labels, the agent wrote
-  `verify_labels.py`, which checks every label by running code (probes plus mutation
-  testing). It then *tested the tester* by flipping labels to confirm that they get
-  rejected.
-- **Unit tests mock the LLM entirely** (53 tests, no network, no key), so the deterministic
-  parts (parsing, verification, retry, report, exit codes) are covered in CI.
-- **Mistakes were caught and logged.** The agent made several real errors, including edits
-  that silently did nothing because `python` on this Windows machine was a Store stub, a
-  CLI crash on a real 503, and a relative-path bug in the verifier. Gemini made some too:
-  confident wrong verdicts and corrupted quotes. All are documented, with how each was
-  detected, in [`AI_LOG.md`](AI_LOG.md).
+- **Verification over eyeballing.** Instead of hand-checking eval labels, every label is
+  verified by running code (behavioural probes plus mutation testing), and the verifier
+  itself was tested by deliberately flipping labels.
+- **Deterministic parts are unit-tested.** 53 tests mock the LLM entirely (no network, no
+  key), covering parsing, verification, retry, report and exit codes in CI.
+- **Mistakes were caught and logged.** The agent made real errors (edits that silently did
+  nothing because `python` on Windows was a Store stub, a CLI crash on a real 503, a
+  relative-path bug in the verifier), and Gemini made some too (confident wrong verdicts,
+  corrupted quotes). All are documented in [AI_LOG.md](AI_LOG.md) with how each was
+  detected.
 
 ## Project layout
 
