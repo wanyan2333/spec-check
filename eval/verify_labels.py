@@ -210,7 +210,7 @@ def write_report(all_rows: list[Row], problems: dict[str, list[str]]) -> None:
     for case, issues in problems.items():
         status = "; ".join(issues) if issues else "diff reproduces after/, app tests pass"
         lines.append(f"- `{case}`: {'OK' if not issues else 'PROBLEM'} — {status}")
-    OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
 def main() -> int:

@@ -1,0 +1,1365 @@
+{
+  "prompt": "v1",
+  "model": "gemini-3.5-flash-lite",
+  "runs": 2,
+  "records": [
+    {
+      "run": 1,
+      "case": "01-complete-with-tests",
+      "error": null,
+      "report": {
+        "title": "Mark a todo as done",
+        "user_story": "As a user, I want to mark a todo as done (or not done again) so that I can track my progress.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`PATCH /todos/{id}` with a JSON body `{\"done\": true}` or `{\"done\": false}` updates the todo's done status and returns the updated todo with status 200.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The PATCH endpoint updates the done status and returns 200 with the updated todo, which is thoroughly tested by test_mark_todo_done.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "@app.patch(\"/todos/{todo_id}\")\ndef update_todo(todo_id: int, payload: TodoUpdate) -> Todo:\n    if todo_id not in todos:\n        raise HTTPException(status_code=404, detail=\"Todo not found\")\n    updated = todos[todo_id].model_copy(update={\"done\": payload.done})\n    todos[todo_id] = updated\n    return updated",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_mark_todo_done():\n    client.post(\"/todos\", json={\"title\": \"Buy milk\"})\n    response = client.patch(\"/todos/1\", json={\"done\": True})\n    assert response.status_code == 200\n    assert response.json() == {\"id\": 1, \"title\": \"Buy milk\", \"done\": True}",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`PATCH /todos/{id}` for an id that does not exist returns 404.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The implementation raises a 404 HTTPException when the todo id does not exist, verified by test_update_missing_todo_returns_404.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    if todo_id not in todos:\n        raise HTTPException(status_code=404, detail=\"Todo not found\")",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_update_missing_todo_returns_404():\n    response = client.patch(\"/todos/99\", json={\"done\": True})\n    assert response.status_code == 404",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC3",
+            "text": "After a successful update, `GET /todos/{id}` returns the new done status.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "Updates are correctly saved to the store and verified using a subsequent GET request in test_update_is_visible_in_get.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    updated = todos[todo_id].model_copy(update={\"done\": payload.done})\n    todos[todo_id] = updated",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_update_is_visible_in_get():\n    client.post(\"/todos\", json={\"title\": \"Buy milk\"})\n    client.patch(\"/todos/1\", json={\"done\": True})\n    assert client.get(\"/todos/1\").json()[\"done\"] is True",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 3.936,
+            "prompt_tokens": 1117,
+            "completion_tokens": 789,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 3,
+          "gaps": 0,
+          "needs_human_review": 0,
+          "total_snippets": 6,
+          "unverified_snippets": 0,
+          "total_tokens": 1906,
+          "total_latency_s": 3.936
+        }
+      }
+    },
+    {
+      "run": 1,
+      "case": "02-missing-edge-case",
+      "error": null,
+      "report": {
+        "title": "Delete a todo",
+        "user_story": "As a user, I want to delete a todo I no longer need so that my list stays short.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`DELETE /todos/{id}` removes the todo and returns status 204; afterwards `GET /todos/{id}` returns 404.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The delete endpoint removes the todo and returns 204, and the test verifies both the deletion status code and that a subsequent GET returns 404.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+@app.delete(\"/todos/{todo_id}\", status_code=204)\n+def delete_todo(todo_id: int) -> None:\n+    todos.pop(todo_id, None)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "+def test_delete_todo():\n+    client.post(\"/todos\", json={\"title\": \"Buy milk\"})\n+    response = client.delete(\"/todos/1\")\n+    assert response.status_code == 204\n+    assert client.get(\"/todos/1\").status_code == 404",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`DELETE /todos/{id}` for an id that does not exist returns 404.",
+            "implemented": "no",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The implementation uses dict.pop with None as a default, which does not check if the item exists and thus does not return a 404 when deleting a non-existent todo.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+@app.delete(\"/todos/{todo_id}\", status_code=204)\n+def delete_todo(todo_id: int) -> None:\n+    todos.pop(todo_id, None)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.1,
+            "prompt_tokens": 718,
+            "completion_tokens": 442,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 2,
+          "gaps": 1,
+          "needs_human_review": 0,
+          "total_snippets": 3,
+          "unverified_snippets": 0,
+          "total_tokens": 1160,
+          "total_latency_s": 2.1
+        }
+      }
+    },
+    {
+      "run": 1,
+      "case": "03-no-tests",
+      "error": null,
+      "report": {
+        "title": "Filter todos by status",
+        "user_story": "As a user, I want to list only my completed or only my open todos so that I can focus.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`GET /todos?done=true` returns only the todos that are done.",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The code filters todos when done is True, but there are no tests in the diff.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+    if done is True:\n+        return [t for t in todos.values() if t.done]",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`GET /todos?done=false` returns only the todos that are not done.",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The code filters todos when done is False, but there are no tests in the diff.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+    if done is False:\n+        return [t for t in todos.values() if not t.done]",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.177,
+            "prompt_tokens": 514,
+            "completion_tokens": 251,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 2,
+          "gaps": 2,
+          "needs_human_review": 0,
+          "total_snippets": 2,
+          "unverified_snippets": 0,
+          "total_tokens": 765,
+          "total_latency_s": 2.177
+        }
+      }
+    },
+    {
+      "run": 1,
+      "case": "04-misleading-test",
+      "error": null,
+      "report": {
+        "title": "Validate todo titles",
+        "user_story": "As a product owner, I want todo titles to be validated so that the list never contains blank or absurdly long entries.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`POST /todos` with an empty title returns 422.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "Pydantic Field sets min_length=1 which rejects empty titles with 422, and it is verified in test_create_rejects_empty_title.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    title: str = Field(min_length=1, max_length=100)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_create_rejects_empty_title():\n    response = client.post(\"/todos\", json={\"title\": \"\"})\n    assert response.status_code == 422",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`POST /todos` with a title longer than 100 characters returns 422.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 0.9,
+            "reasoning": "Max length is set to 100 via Pydantic Field, and a test checks for too long titles (though the test body uses an empty string payload, the implementation correctly enforces max_length=100).",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    title: str = Field(min_length=1, max_length=100)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_create_rejects_too_long_title():\n    long_title = \"x\" * 101\n    response = client.post(\"/todos\", json={\"title\": \"\"})\n    assert response.status_code == 422",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC3",
+            "text": "A title of exactly 100 characters is accepted (201).",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 0.9,
+            "reasoning": "A title of exactly 100 characters will pass the max_length=100 validation and be accepted, but there is no explicit test in the diff verifying this case.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    title: str = Field(min_length=1, max_length=100)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.335,
+            "prompt_tokens": 767,
+            "completion_tokens": 588,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 3,
+          "gaps": 1,
+          "needs_human_review": 0,
+          "total_snippets": 5,
+          "unverified_snippets": 0,
+          "total_tokens": 1355,
+          "total_latency_s": 2.335
+        }
+      }
+    },
+    {
+      "run": 1,
+      "case": "05-unrelated-change",
+      "error": null,
+      "report": {
+        "title": "Search todos by title",
+        "user_story": "As a user with many todos, I want to search them by a word in the title so that I can find one quickly.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`GET /todos?q=<text>` returns only the todos whose title contains `<text>`, ignoring case.",
+            "implemented": "no",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The code change does not add filtering logic for the query parameter `q` in the `/todos` endpoint.",
+            "evidence": [],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "A search that matches nothing returns status 200 and an empty list.",
+            "implemented": "no",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The code change does not implement search functionality or handle empty search results for `/todos`.",
+            "evidence": [],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 1.437,
+            "prompt_tokens": 665,
+            "completion_tokens": 160,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 2,
+          "gaps": 2,
+          "needs_human_review": 0,
+          "total_snippets": 0,
+          "unverified_snippets": 0,
+          "total_tokens": 825,
+          "total_latency_s": 1.437
+        }
+      }
+    },
+    {
+      "run": 1,
+      "case": "06-partial-validation",
+      "error": null,
+      "report": {
+        "title": "Todo priority",
+        "user_story": "As a user, I want to give each todo a priority from 1 (highest) to 5 (lowest) so that I can sort my work.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`POST /todos` accepts an optional integer `priority`; when it is omitted the priority defaults to 3. The priority is included in the returned todo.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The TodoIn model defaults priority to 3, and the returned Todo model includes the priority field. A test checks the default behavior.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    priority: int = Field(default=3, le=5)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_create_todo():\n    response = client.post(\"/todos\", json={\"title\": \"Buy milk\"})\n    assert response.status_code == 201\n    assert response.json() == {\"id\": 1, \"title\": \"Buy milk\", \"done\": False, \"priority\": 3}",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "A priority outside the range 1 to 5 (inclusive) is rejected with 422.",
+            "implemented": "partial",
+            "tested": "yes",
+            "confidence": 0.8,
+            "reasoning": "The code only checks upper bound (le=5) using Pydantic, omitting the lower bound constraint (ge=1), though priorities above 5 are rejected and tested.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    priority: int = Field(default=3, le=5)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_create_todo_rejects_priority_above_5():\n    response = client.post(\"/todos\", json={\"title\": \"Pay rent\", \"priority\": 6})\n    assert response.status_code == 422",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.079,
+            "prompt_tokens": 1076,
+            "completion_tokens": 444,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 2,
+          "gaps": 1,
+          "needs_human_review": 0,
+          "total_snippets": 4,
+          "unverified_snippets": 0,
+          "total_tokens": 1520,
+          "total_latency_s": 2.079
+        }
+      }
+    },
+    {
+      "run": 1,
+      "case": "07-mixed",
+      "error": null,
+      "report": {
+        "title": "Paginate the todo list",
+        "user_story": "As a user with a long list, I want `GET /todos` to be paginated so that the app stays fast.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`GET /todos?limit=N` returns at most N todos.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The code implements limit parameter slicing and it is directly tested with a test case checking the returned subset.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "def list_todos(limit: int = 50, offset: int = 0) -> list[Todo]:\n    items = list(todos.values())\n    return items[offset : offset + limit]",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_list_todos_with_limit():\n    for title in [\"a\", \"b\", \"c\"]:\n        client.post(\"/todos\", json={\"title\": title})\n    response = client.get(\"/todos\", params={\"limit\": 2})\n    assert response.status_code == 200\n    assert [t[\"title\"] for t in response.json()] == [\"a\", \"b\"]",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`GET /todos?offset=M` skips the first M todos.",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The offset parameter is implemented via slicing, but there is no test verifying offset behavior in the diff.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "def list_todos(limit: int = 50, offset: int = 0) -> list[Todo]:\n    items = list(todos.values())\n    return items[offset : offset + limit]",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC3",
+            "text": "A `limit` greater than 100 is rejected with 422.",
+            "implemented": "no",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "There is no logic in the code to check if limit > 100 and reject it with status 422.",
+            "evidence": [],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.281,
+            "prompt_tokens": 775,
+            "completion_tokens": 512,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 3,
+          "gaps": 2,
+          "needs_human_review": 0,
+          "total_snippets": 3,
+          "unverified_snippets": 0,
+          "total_tokens": 1287,
+          "total_latency_s": 2.281
+        }
+      }
+    },
+    {
+      "run": 1,
+      "case": "08-weak-assertion",
+      "error": null,
+      "report": {
+        "title": "Todo statistics",
+        "user_story": "As a user, I want to see how many todos I have and how many are done so that I can see my progress at a glance.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`GET /todos/stats` returns a `total` field equal to the number of todos.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The endpoint correctly calculates the total number of todos and the test asserts that 'total' is 2.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "@app.get(\"/todos/stats\")\ndef todo_stats() -> dict[str, int]:\n    total = len(todos)\n    done = sum(1 for t in todos.values() if t.done is not None)\n    return {\"total\": total, \"done\": done}",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_stats():\n    client.post(\"/todos\", json={\"title\": \"a\"})\n    client.post(\"/todos\", json={\"title\": \"b\"})\n    response = client.get(\"/todos/stats\")\n    assert response.status_code == 200\n    body = response.json()\n    assert body[\"total\"] == 2",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`GET /todos/stats` returns a `done` field equal to the number of todos that are done.",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 0.9,
+            "reasoning": "The 'done' field is implemented and returned by the endpoint, but the test does not assert the exact value of done.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "@app.get(\"/todos/stats\")\ndef todo_stats() -> dict[str, int]:\n    total = len(todos)\n    done = sum(1 for t in todos.values() if t.done is not None)\n    return {\"total\": total, \"done\": done}",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_stats():\n    client.post(\"/todos\", json={\"title\": \"a\"})\n    client.post(\"/todos\", json={\"title\": \"b\"})\n    response = client.get(\"/todos/stats\")\n    assert response.status_code == 200\n    body = response.json()\n    assert \"done\" in body",
+                "verified": false,
+                "is_test_file": true,
+                "note": "snippet not found in this file's diff"
+              }
+            ],
+            "review_reasons": [
+              "1 evidence snippet(s) failed verification"
+            ],
+            "needs_human_review": true
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.851,
+            "prompt_tokens": 765,
+            "completion_tokens": 583,
+            "retries": 0
+          },
+          {
+            "purpose": "repair",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.698,
+            "prompt_tokens": 1464,
+            "completion_tokens": 575,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 2,
+          "gaps": 1,
+          "needs_human_review": 1,
+          "total_snippets": 4,
+          "unverified_snippets": 1,
+          "total_tokens": 3387,
+          "total_latency_s": 5.549
+        }
+      }
+    },
+    {
+      "run": 2,
+      "case": "01-complete-with-tests",
+      "error": null,
+      "report": {
+        "title": "Mark a todo as done",
+        "user_story": "As a user, I want to mark a todo as done (or not done again) so that I can track my progress.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`PATCH /todos/{id}` with a JSON body `{\"done\": true}` or `{\"done\": false}` updates the todo's done status and returns the updated todo with status 200.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The PATCH endpoint updates the todo's done status and returns 200 with the updated todo, which is fully implemented and verified by tests.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "@app.patch(\"/todos/{todo_id}\")\ndef update_todo(todo_id: int, payload: TodoUpdate) -> Todo:\n    if todo_id not in todos:\n        raise HTTPException(status_code=404, detail=\"Todo not found\")\n    updated = todos[todo_id].model_copy(update={\"done\": payload.done})\n    todos[todo_id] = updated\n    return updated",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_mark_todo_done():\n    client.post(\"/todos\", json={\"title\": \"Buy milk\"})\n    response = client.patch(\"/todos/1\", json={\"done\": True})\n    assert response.status_code == 200\n    assert response.json() == {\"id\": 1, \"title\": \"Buy milk\", \"done\": True}",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`PATCH /todos/{id}` for an id that does not exist returns 404.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The implementation checks if the todo exists and raises 404 if missing, and this is explicitly tested.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    if todo_id not in todos:\n        raise HTTPException(status_code=404, detail=\"Todo not found\")",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_update_missing_todo_returns_404():\n    response = client.patch(\"/todos/99\", json={\"done\": True})\n    assert response.status_code == 404",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC3",
+            "text": "After a successful update, `GET /todos/{id}` returns the new done status.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The updated todo is stored in the dictionary, allowing subsequent GET requests to retrieve the new done status, which is verified by test.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    updated = todos[todo_id].model_copy(update={\"done\": payload.done})\n    todos[todo_id] = updated",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_update_is_visible_in_get():\n    client.post(\"/todos\", json={\"title\": \"Buy milk\"})\n    client.patch(\"/todos/1\", json={\"done\": True})\n    assert client.get(\"/todos/1\").json()[\"done\"] is True",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.875,
+            "prompt_tokens": 1117,
+            "completion_tokens": 776,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 3,
+          "gaps": 0,
+          "needs_human_review": 0,
+          "total_snippets": 6,
+          "unverified_snippets": 0,
+          "total_tokens": 1893,
+          "total_latency_s": 2.875
+        }
+      }
+    },
+    {
+      "run": 2,
+      "case": "02-missing-edge-case",
+      "error": null,
+      "report": {
+        "title": "Delete a todo",
+        "user_story": "As a user, I want to delete a todo I no longer need so that my list stays short.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`DELETE /todos/{id}` removes the todo and returns status 204; afterwards `GET /todos/{id}` returns 404.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The delete endpoint removes the todo and returns 204, and the test verifies both the 204 response and that a subsequent GET returns 404.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+@app.delete(\"/todos/{todo_id}\", status_code=204)\n+def delete_todo(todo_id: int) -> None:\n+    todos.pop(todo_id, None)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "+def test_delete_todo():\n+    client.post(\"/todos\", json={\"title\": \"Buy milk\"})\n+    response = client.delete(\"/todos/1\")\n+    assert response.status_code == 204\n+    assert client.get(\"/todos/1\").status_code == 404",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`DELETE /todos/{id}` for an id that does not exist returns 404.",
+            "implemented": "no",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The implementation uses dict.pop with None as the default, meaning it does not check if the id exists and will not return 404 for a missing todo.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+@app.delete(\"/todos/{todo_id}\", status_code=204)\n+def delete_todo(todo_id: int) -> None:\n+    todos.pop(todo_id, None)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.233,
+            "prompt_tokens": 718,
+            "completion_tokens": 444,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 2,
+          "gaps": 1,
+          "needs_human_review": 0,
+          "total_snippets": 3,
+          "unverified_snippets": 0,
+          "total_tokens": 1162,
+          "total_latency_s": 2.233
+        }
+      }
+    },
+    {
+      "run": 2,
+      "case": "03-no-tests",
+      "error": null,
+      "report": {
+        "title": "Filter todos by status",
+        "user_story": "As a user, I want to list only my completed or only my open todos so that I can focus.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`GET /todos?done=true` returns only the todos that are done.",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The code correctly filters todos where `done` is true when the query parameter is provided, but no tests were added in the diff.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+    if done is True:\n+        return [t for t in todos.values() if t.done]",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`GET /todos?done=false` returns only the todos that are not done.",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The code correctly filters todos where `done` is false when the query parameter is provided, but no tests were added in the diff.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+    if done is False:\n+        return [t for t in todos.values() if not t.done]",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 1.584,
+            "prompt_tokens": 514,
+            "completion_tokens": 273,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 2,
+          "gaps": 2,
+          "needs_human_review": 0,
+          "total_snippets": 2,
+          "unverified_snippets": 0,
+          "total_tokens": 787,
+          "total_latency_s": 1.584
+        }
+      }
+    },
+    {
+      "run": 2,
+      "case": "04-misleading-test",
+      "error": null,
+      "report": {
+        "title": "Validate todo titles",
+        "user_story": "As a product owner, I want todo titles to be validated so that the list never contains blank or absurdly long entries.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`POST /todos` with an empty title returns 422.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The model uses Field with min_length=1 and a test verifies that an empty title returns 422.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+    title: str = Field(min_length=1, max_length=100)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "+def test_create_rejects_empty_title():\n+    response = client.post(\"/todos\", json={\"title\": \"\"})\n+    assert response.status_code == 422",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`POST /todos` with a title longer than 100 characters returns 422.",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 0.8,
+            "reasoning": "Max length is implemented via Field, but the test passes an empty string instead of the long_title variable, meaning the test does not actually exercise the long title behavior.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+    title: str = Field(min_length=1, max_length=100)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "+def test_create_rejects_too_long_title():\n+    long_title = \"x\" * 101\n+    response = client.post(\"/todos\", json={\"title\": \"\"})\n+    assert response.status_code == 422",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC3",
+            "text": "A title of exactly 100 characters is accepted (201).",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 0.9,
+            "reasoning": "A maximum length of 100 allows titles of exactly 100 characters, but no test explicitly asserts this.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+    title: str = Field(min_length=1, max_length=100)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.086,
+            "prompt_tokens": 767,
+            "completion_tokens": 557,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 3,
+          "gaps": 2,
+          "needs_human_review": 0,
+          "total_snippets": 5,
+          "unverified_snippets": 0,
+          "total_tokens": 1324,
+          "total_latency_s": 2.086
+        }
+      }
+    },
+    {
+      "run": 2,
+      "case": "05-unrelated-change",
+      "error": null,
+      "report": {
+        "title": "Search todos by title",
+        "user_story": "As a user with many todos, I want to search them by a word in the title so that I can find one quickly.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`GET /todos?q=<text>` returns only the todos whose title contains `<text>`, ignoring case.",
+            "implemented": "no",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The code change does not add query parameter filtering to GET /todos, nor does it add any test for it.",
+            "evidence": [],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "A search that matches nothing returns status 200 and an empty list.",
+            "implemented": "no",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The code change does not implement empty list return for unmatched searches, nor does it add any test for it.",
+            "evidence": [],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 1.314,
+            "prompt_tokens": 665,
+            "completion_tokens": 161,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 2,
+          "gaps": 2,
+          "needs_human_review": 0,
+          "total_snippets": 0,
+          "unverified_snippets": 0,
+          "total_tokens": 826,
+          "total_latency_s": 1.314
+        }
+      }
+    },
+    {
+      "run": 2,
+      "case": "06-partial-validation",
+      "error": null,
+      "report": {
+        "title": "Todo priority",
+        "user_story": "As a user, I want to give each todo a priority from 1 (highest) to 5 (lowest) so that I can sort my work.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`POST /todos` accepts an optional integer `priority`; when it is omitted the priority defaults to 3. The priority is included in the returned todo.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The code defines a default priority of 3 using Pydantic Field, includes it in the Todo model and response, and tests both the default case and custom priority creation.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    priority: int = Field(default=3, le=5)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "    assert response.json() == {\"id\": 1, \"title\": \"Buy milk\", \"done\": False, \"priority\": 3}",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "A priority outside the range 1 to 5 (inclusive) is rejected with 422.",
+            "implemented": "partial",
+            "tested": "yes",
+            "confidence": 0.8,
+            "reasoning": "The implementation validates `le=5` via Pydantic, which triggers a 422 error for priorities above 5, but it omits a lower bound check (e.g. `ge=1`) for priorities below 1.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "    priority: int = Field(default=3, le=5)",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "def test_create_todo_rejects_priority_above_5():\n    response = client.post(\"/todos\", json={\"title\": \"Pay rent\", \"priority\": 6})\n    assert response.status_code == 422",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 1.948,
+            "prompt_tokens": 1076,
+            "completion_tokens": 423,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 2,
+          "gaps": 1,
+          "needs_human_review": 0,
+          "total_snippets": 4,
+          "unverified_snippets": 0,
+          "total_tokens": 1499,
+          "total_latency_s": 1.948
+        }
+      }
+    },
+    {
+      "run": 2,
+      "case": "07-mixed",
+      "error": null,
+      "report": {
+        "title": "Paginate the todo list",
+        "user_story": "As a user with a long list, I want `GET /todos` to be paginated so that the app stays fast.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`GET /todos?limit=N` returns at most N todos.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The endpoint accepts a limit parameter and slices the list accordingly, which is verified by a dedicated test.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+def list_todos(limit: int = 50, offset: int = 0) -> list[Todo]:\n+    items = list(todos.values())\n+    return items[offset : offset + limit]",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "+def test_list_todos_with_limit():\n+    for title in [\"a\", \"b\", \"c\"]:\n+        client.post(\"/todos\", json={\"title\": title})\n+    response = client.get(\"/todos\", params={\"limit\": 2})\n+    assert response.status_code == 200\n+    assert [t[\"title\"] for t in response.json()] == [\"a\", \"b\"]",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`GET /todos?offset=M` skips the first M todos.",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "The offset parameter is implemented via Python list slicing, but there is no test verifying this behavior in the diff.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "+def list_todos(limit: int = 50, offset: int = 0) -> list[Todo]:\n+    items = list(todos.values())\n+    return items[offset : offset + limit]",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC3",
+            "text": "A `limit` greater than 100 is rejected with 422.",
+            "implemented": "no",
+            "tested": "no",
+            "confidence": 1.0,
+            "reasoning": "There is no validation logic in the code change to check if limit > 100 and reject it with 422.",
+            "evidence": [],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.288,
+            "prompt_tokens": 775,
+            "completion_tokens": 524,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 3,
+          "gaps": 2,
+          "needs_human_review": 0,
+          "total_snippets": 3,
+          "unverified_snippets": 0,
+          "total_tokens": 1299,
+          "total_latency_s": 2.288
+        }
+      }
+    },
+    {
+      "run": 2,
+      "case": "08-weak-assertion",
+      "error": null,
+      "report": {
+        "title": "Todo statistics",
+        "user_story": "As a user, I want to see how many todos I have and how many are done so that I can see my progress at a glance.",
+        "model": "gemini-3.5-flash-lite",
+        "prompt_version": "v1",
+        "results": [
+          {
+            "id": "AC1",
+            "text": "`GET /todos/stats` returns a `total` field equal to the number of todos.",
+            "implemented": "yes",
+            "tested": "yes",
+            "confidence": 1.0,
+            "reasoning": "The endpoint correctly calculates the total number of todos and the test explicitly asserts that the 'total' field is correct.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "@app.get(\"/todos/stats\")\ndef todo_stats() -> dict[str, int]:\n    total = len(todos)\n    done = sum(1 for t in todos.values() if t.done is not None)\n    return {\"total\": total, \"done\": done}",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "    assert body[\"total\"] == 2",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          },
+          {
+            "id": "AC2",
+            "text": "`GET /todos/stats` returns a `done` field equal to the number of todos that are done.",
+            "implemented": "yes",
+            "tested": "no",
+            "confidence": 0.8,
+            "reasoning": "The 'done' field is implemented and returned, but the test only checks its presence rather than asserting its exact numerical value.",
+            "evidence": [
+              {
+                "file": "app.py",
+                "snippet": "@app.get(\"/todos/stats\")\ndef todo_stats() -> dict[str, int]:\n    total = len(todos)\n    done = sum(1 for t in todos.values() if t.done is not None)\n    return {\"total\": total, \"done\": done}",
+                "verified": true,
+                "is_test_file": false,
+                "note": ""
+              },
+              {
+                "file": "test_app.py",
+                "snippet": "    assert \"done\" in body",
+                "verified": true,
+                "is_test_file": true,
+                "note": ""
+              }
+            ],
+            "review_reasons": [],
+            "needs_human_review": false
+          }
+        ],
+        "calls": [
+          {
+            "purpose": "initial",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 2.071,
+            "prompt_tokens": 765,
+            "completion_tokens": 419,
+            "retries": 0
+          },
+          {
+            "purpose": "repair",
+            "model": "gemini-3.5-flash-lite",
+            "latency_s": 1.831,
+            "prompt_tokens": 1300,
+            "completion_tokens": 419,
+            "retries": 0
+          }
+        ],
+        "summary": {
+          "criteria": 2,
+          "gaps": 1,
+          "needs_human_review": 0,
+          "total_snippets": 4,
+          "unverified_snippets": 0,
+          "total_tokens": 2903,
+          "total_latency_s": 3.902
+        }
+      }
+    }
+  ]
+}
