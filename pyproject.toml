@@ -44,4 +44,4 @@ select = ["E", "F", "I", "B", "UP"]
 
 [tool.ruff.lint.isort]
 # Local modules imported by the eval scripts, the sample app tests and probes.
-known-first-party = ["spec_check", "app", "case_tools"]
+known-first-party = ["spec_check", "app", "case_tools", "run_eval"]

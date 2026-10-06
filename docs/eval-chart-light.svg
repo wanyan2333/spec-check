@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="514" viewBox="0 0 840 514" font-family="system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-label="spec-check evaluation results by configuration">
+<rect x="0.5" y="0.5" width="839" height="513" rx="10" fill="#fcfcfb" stroke="#e1e0d9"/>
+<text x="24" y="34" font-size="17" font-weight="600" fill="#0b0b0b">Evaluation: higher is better</text>
+<text x="24" y="54" font-size="12.5" fill="#52514e">8 cases · 19 acceptance criteria · 2 runs each (38 judgments per configuration)</text>
+<circle cx="30.0" cy="74.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="42" y="78" font-size="12.5" fill="#0b0b0b">prompt v1 · 3.5-flash-lite</text>
+<rect x="226.6" y="69.0" width="10" height="10" rx="2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="244" y="78" font-size="12.5" fill="#0b0b0b">prompt v2 · 3.5-flash-lite (default)</text>
+<path d="M499.2,67.5 L505.7,74.0 L499.2,80.5 L492.7,74.0 Z" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text x="511" y="78" font-size="12.5" fill="#0b0b0b">prompt v2 · 3.1-flash-lite</text>
+<line x1="230.0" y1="88" x2="230.0" y2="452" stroke="#e1e0d9" stroke-width="1"/>
+<text x="230.0" y="468" font-size="11.5" text-anchor="middle" fill="#898781">75%</text>
+<line x1="342.0" y1="88" x2="342.0" y2="452" stroke="#e1e0d9" stroke-width="1"/>
+<text x="342.0" y="468" font-size="11.5" text-anchor="middle" fill="#898781">80%</text>
+<line x1="454.0" y1="88" x2="454.0" y2="452" stroke="#e1e0d9" stroke-width="1"/>
+<text x="454.0" y="468" font-size="11.5" text-anchor="middle" fill="#898781">85%</text>
+<line x1="566.0" y1="88" x2="566.0" y2="452" stroke="#e1e0d9" stroke-width="1"/>
+<text x="566.0" y="468" font-size="11.5" text-anchor="middle" fill="#898781">90%</text>
+<line x1="678.0" y1="88" x2="678.0" y2="452" stroke="#e1e0d9" stroke-width="1"/>
+<text x="678.0" y="468" font-size="11.5" text-anchor="middle" fill="#898781">95%</text>
+<line x1="790.0" y1="88" x2="790.0" y2="452" stroke="#e1e0d9" stroke-width="1"/>
+<text x="790.0" y="468" font-size="11.5" text-anchor="middle" fill="#898781">100%</text>
+<text x="24" y="118.5" font-size="13" fill="#0b0b0b">Both labels correct</text>
+<circle cx="613.2" cy="99.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="624.2" y="103.5" font-size="11" fill="#52514e">92% (35/38)</text>
+<rect x="667.1" y="109.5" width="10" height="10" rx="2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="661.1" y="118.5" font-size="11" text-anchor="end" fill="#52514e">95% (36/38)</text>
+<path d="M672.1,123.0 L678.6,129.5 L672.1,136.0 L665.6,129.5 Z" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text x="661.1" y="133.5" font-size="11" text-anchor="end" fill="#52514e">95% (36/38)</text>
+<text x="24" y="179.5" font-size="13" fill="#0b0b0b">Implemented accuracy</text>
+<circle cx="672.1" cy="160.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="661.1" y="164.5" font-size="11" text-anchor="end" fill="#52514e">95% (36/38)</text>
+<rect x="667.1" y="170.5" width="10" height="10" rx="2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="661.1" y="179.5" font-size="11" text-anchor="end" fill="#52514e">95% (36/38)</text>
+<path d="M790.0,184.0 L796.5,190.5 L790.0,197.0 L783.5,190.5 Z" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text x="779.0" y="194.5" font-size="11" text-anchor="end" fill="#52514e">100% (38/38)</text>
+<text x="24" y="240.5" font-size="13" fill="#0b0b0b">Tested accuracy</text>
+<circle cx="731.1" cy="221.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="720.1" y="225.5" font-size="11" text-anchor="end" fill="#52514e">97% (37/38)</text>
+<rect x="785.0" y="231.5" width="10" height="10" rx="2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="779.0" y="240.5" font-size="11" text-anchor="end" fill="#52514e">100% (38/38)</text>
+<path d="M672.1,245.0 L678.6,251.5 L672.1,258.0 L665.6,251.5 Z" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text x="661.1" y="255.5" font-size="11" text-anchor="end" fill="#52514e">95% (36/38)</text>
+<text x="24" y="301.5" font-size="13" fill="#0b0b0b">Missing-impl. detected</text>
+<circle cx="416.7" cy="282.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="427.7" y="286.5" font-size="11" fill="#52514e">83% (10/12)</text>
+<rect x="411.7" y="292.5" width="10" height="10" rx="2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="427.7" y="301.5" font-size="11" fill="#52514e">83% (10/12)</text>
+<path d="M790.0,306.0 L796.5,312.5 L790.0,319.0 L783.5,312.5 Z" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text x="779.0" y="316.5" font-size="11" text-anchor="end" fill="#52514e">100% (12/12)</text>
+<text x="24" y="362.5" font-size="13" fill="#0b0b0b">Missing tests detected</text>
+<circle cx="678.0" cy="343.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="667.0" y="347.5" font-size="11" text-anchor="end" fill="#52514e">95% (19/20)</text>
+<rect x="785.0" y="353.5" width="10" height="10" rx="2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="779.0" y="362.5" font-size="11" text-anchor="end" fill="#52514e">100% (20/20)</text>
+<path d="M790.0,367.0 L796.5,373.5 L790.0,380.0 L783.5,373.5 Z" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text x="779.0" y="377.5" font-size="11" text-anchor="end" fill="#52514e">100% (20/20)</text>
+<text x="24" y="423.5" font-size="13" fill="#0b0b0b">Run-to-run consistency</text>
+<circle cx="672.1" cy="404.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="661.1" y="408.5" font-size="11" text-anchor="end" fill="#52514e">95% (18/19)</text>
+<rect x="785.0" y="414.5" width="10" height="10" rx="2" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text x="779.0" y="423.5" font-size="11" text-anchor="end" fill="#52514e">100% (19/19)</text>
+<path d="M790.0,428.0 L796.5,434.5 L790.0,441.0 L783.5,434.5 Z" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text x="779.0" y="438.5" font-size="11" text-anchor="end" fill="#52514e">100% (19/19)</text>
+<text x="24" y="496" font-size="12" fill="#52514e">All configurations: 0/16 false positives on fully correct criteria · axis starts at 75%</text>
+</svg>
